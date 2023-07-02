@@ -1,12 +1,12 @@
 #pragma once
-
 #include "raylib.h"
 
+// DEFINITIONS
 bool planarPointWithinTriangle(float P[2], float V1[2], float V2[2], float V3[2]);
 void delaunayTriangulate(float points[][2], int numPoints);
 
+// IMPLEMENTATION
 #ifdef DELAUNAY_IMPLEMENTATION
-
 bool planarPointWithinTriangle(float P[2], float V1[2], float V2[2], float V3[2]) {
 
 	float AB[2] = { V2[0] - V1[0],V2[1] - V1[1] };
@@ -394,5 +394,4 @@ void delaunayTriangulate(float in_points[][2], int numPoints) {
 
 	return;
 }
-
 #endif

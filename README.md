@@ -1,5 +1,7 @@
 # Implementation of the Delaunay triangulation algorithm with visualization
 
+Based on: https://www.newcastle.edu.au/__data/assets/pdf_file/0017/22508/13_A-fast-algorithm-for-constructing-Delaunay-triangulations-in-the-plane.pdf
+
 ## Building and Running
 
 Be sure to have CMake installed
@@ -10,5 +12,4 @@ Be sure to have CMake installed
 .\run.bat
 ```
 
-![gray](/assets/gray.jpg)
-![color](/assets/color.jpg)
+![animation](/assets/animation.gif)

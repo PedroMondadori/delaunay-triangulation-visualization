@@ -1,20 +1,10 @@
 #include <stdio.h>
-#include <stdbool.h>
 #include <stdlib.h>
-#include <math.h>
-#include <time.h>
-#include <float.h>
 #define DELAUNAY_IMPLEMENTATION
 #include "delaunay.h"
-
-//WINDOW
-#define SCREEN_SCALE 100
-#define SCREEN_WIDTH (16*SCREEN_SCALE)
-#define SCREEN_HEIGHT (9*SCREEN_SCALE)
-#define WINDOW_TITLE "Animation Test"
-
-#define NUMBER_OF_POINTS 50
-
+#define POINTS_IMPLEMENTATION
+#include "points.h"
+#include "utils.h"
 
 int main(void)
 {
@@ -23,68 +13,45 @@ int main(void)
 
     srand(time(NULL));
 
-    // generate points
-    float pointCloud2D[NUMBER_OF_POINTS][2];
+    float pointCloud2D[POINTS_SIZE][2];
+    float(*points)[2] = malloc(POINTS_SIZE * 2 * sizeof(float));
+    float pointSpeeds[POINTS_SIZE][2];
 
-    for (size_t i = 0; i < NUMBER_OF_POINTS; i++)
-    {
-        pointCloud2D[i][0] = (rand() % (SCREEN_WIDTH - 2)) + 1;
-        pointCloud2D[i][1] = (rand() % (SCREEN_HEIGHT - 2)) + 1;
-    }
+    generate_points(pointCloud2D, POINTS_SIZE);
+    generete_speeds(pointSpeeds, POINTS_SIZE);
+    array_copy(points, pointCloud2D, POINTS_SIZE);
 
-    float(*pointsA)[2] = malloc(NUMBER_OF_POINTS * 2 * sizeof(float));
-    for (int i = 0; i < NUMBER_OF_POINTS; i++) {
-        pointsA[i][0] = pointCloud2D[i][0];
-        pointsA[i][1] = pointCloud2D[i][1];
-    }
-
-    // generate speeds
-    bool pointSpeeds[NUMBER_OF_POINTS][2];
-
-    for (size_t i = 0; i < NUMBER_OF_POINTS; i++)
-    {
-        pointSpeeds[i][0] = rand() & 1;
-        pointSpeeds[i][1] = rand() & 1;
-    }
-
-
-    printf("SCREEN RESOLUTION: %dx%d\n", SCREEN_WIDTH, SCREEN_HEIGHT);
     while (!WindowShouldClose())
     {    
         BeginDrawing();
         {
             ClearBackground(DARKGRAY);
-            delaunayTriangulate(pointsA, NUMBER_OF_POINTS);
+            delaunayTriangulate(points, POINTS_SIZE);
 
-            for (size_t i = 0; i < NUMBER_OF_POINTS; i++)
+            for (size_t i = 0; i < POINTS_SIZE; i++)
             {
-                if ((pointsA[i][0] + 1) >= SCREEN_WIDTH ||
-                    (pointsA[i][0] - 1) <= 0)
+                if ((points[i][0] + 1) >= SCREEN_WIDTH ||
+                    (points[i][0] - 1) <= 0)
                 {
-                    printf("OUT OF BOUNDS[X]: x: %f, y: %f, speed: [%u, %u]\n", pointsA[i][0], pointsA[i][1], pointSpeeds[i][0], pointSpeeds[i][1]);
-                    pointSpeeds[i][0] = !pointSpeeds[i][0];
-                    pointsA[i][0] += pointSpeeds[i][0] ? 1 : -1;
+                    pointSpeeds[i][0] *= -1;
+                    points[i][0] += pointSpeeds[i][0];
                 }
-                if ((pointsA[i][1] + 1) >= SCREEN_HEIGHT ||
-                    (pointsA[i][1] - 1) <= 0)
+                if ((points[i][1] + 1) >= SCREEN_HEIGHT ||
+                    (points[i][1] - 1) <= 0)
                 {
-                    printf("OUT OF BOUNDS[Y]: x: %f, y: %f, speed: [%u, %u]\n", pointsA[i][0], pointsA[i][1], pointSpeeds[i][0], pointSpeeds[i][1]);
-                    pointSpeeds[i][1] = !pointSpeeds[i][1];
-                    pointsA[i][1] += pointSpeeds[i][1] ? 1 : -1;
+                    pointSpeeds[i][1] *= -1;
+                    points[i][1] += pointSpeeds[i][1];
                 }
 
-                float speed = 0.05f;
-                pointsA[i][0] += pointSpeeds[i][0] ? speed : -speed;
-                pointsA[i][1] += pointSpeeds[i][1] ? speed : -speed;
+                points[i][0] += pointSpeeds[i][0]*POINTS_SPEED;
+                points[i][1] += pointSpeeds[i][1]*POINTS_SPEED;
 
                 // chance for the point to change directions randomly
-                if (((float)rand() / (float)RAND_MAX) < 0.0005) {
-                    printf("aa\n");
-                    pointSpeeds[i][0] = !pointSpeeds[i][0];
+                if (((float)rand() / (float)RAND_MAX) < POINTS_TURN_CHANCE) {
+                    pointSpeeds[i][0] *= -1;
                 }
-                if (((float)rand() / (float)RAND_MAX) < 0.0005) {
-                    printf("bb\n");
-                    pointSpeeds[i][1] = !pointSpeeds[i][1];
+                if (((float)rand() / (float)RAND_MAX) < POINTS_TURN_CHANCE) {
+                    pointSpeeds[i][1] *= -1;
                 }
             }
         }
