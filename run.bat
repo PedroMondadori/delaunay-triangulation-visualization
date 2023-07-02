@@ -1,0 +1,1 @@
+.\build\Debug\delaunay_triangulation_visualization.exe
