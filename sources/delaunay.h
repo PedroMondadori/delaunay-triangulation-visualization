@@ -364,8 +364,8 @@ void delaunayTriangulate(float in_points[][2], int numPoints) {
 			(Vector2) {	points[verts_final[i][2]][0], points[verts_final[i][2]][1] },
 			(Color) { 
 				(int)points[verts_final[i][1]][0] % 128,
-				(int)points[verts_final[i][1]][0] % 128, 
-				(int)points[verts_final[i][1]][0] % 128,
+				(int)points[verts_final[i][0]][0] % 128, 
+				(int)points[verts_final[i][2]][0] % 128,
 				0xFF
 			}
 		);
